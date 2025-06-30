@@ -1,11 +1,11 @@
 import tempfile
-from langchain.document_loaders import PyPDFLoader
+from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.vectorstores import FAISS
+from langchain_community.vectorstores import FAISS
 from langchain.chains import RetrievalQA
-from langchain.chat_models import ChatOpenAI
-from langchain_community.embeddings import HuggingFaceEmbeddings 
-
+from langchain_openai import ChatOpenAI  # 如果你有langchain-openai包
+# 或者使用：from langchain_community.chat_models import ChatOpenAI
+from langchain_community.embeddings import HuggingFaceEmbeddings
 def process_pdf(uploaded_file):
 
     with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
