@@ -1,6 +1,6 @@
 streamlit
 langchain==0.1.13
-langchain-community
+langchain-community>=0.0.35
 openai
 pypdf
 tiktoken
