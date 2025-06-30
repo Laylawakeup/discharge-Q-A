@@ -1,9 +1,11 @@
 streamlit
 langchain
 langchain-community
-langchain-openai
-openai
+langchain-core
 pypdf
 tiktoken
 faiss-cpu
 sentence-transformers
+transformers
+torch
+accelerate
