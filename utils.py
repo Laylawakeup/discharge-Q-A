@@ -17,11 +17,23 @@ def process_pdf(uploaded_file):
 
     loader = PyPDFLoader(tmp_path)
     pages = loader.load()
+
     splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
     docs = splitter.split_documents(pages)
 
     embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
-    vectorstore = FAISS.from_documents(docs, embeddings)
+
+    # 💡 使用小批量嵌入以规避速率限制
+    def safe_embed(texts, embedder, batch_size=1, delay=1.0):
+        vectors = []
+        for i in range(0, len(texts), batch_size):
+            batch = texts[i:i + batch_size]
+            vectors.extend(embedder.embed_documents(batch))
+            time.sleep(delay)
+        return vectors
+
+    embedded_docs = safe_embed(docs, embeddings, batch_size=1, delay=1.0)
+    vectorstore = FAISS.from_documents(docs, embedded_docs)
 
     retriever = vectorstore.as_retriever()
     return retriever
@@ -31,3 +43,6 @@ def get_answer(question, retriever):
     qa = RetrievalQA.from_chain_type(llm=llm, retriever=retriever)
     result = qa.run(question)
     return result
+
+import time
+
