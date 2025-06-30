@@ -74,8 +74,14 @@ def process_pdf(file, *, k: int = 4):
 
 
 # ---------- 5. Q&A ----------
-def get_answer(question, retriever):
-    """Run Retrieval-QA chain and return the answer text."""
-    try:
-        llm = create_llm()
-        qa_chain = RetrievalQA.from_chain_type(
+def get_answer(query: str, retriever):
+    """Return answer text using a Retrieval-QA chain."""
+    llm = create_llm()
+    chain = RetrievalQA.from_chain_type(
+        llm=llm,
+        chain_type="stuff",
+        retriever=retriever,
+        return_source_documents=True,
+    )
+    result = chain({"query": query})
+    return result["result"]
