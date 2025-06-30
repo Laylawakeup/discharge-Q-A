@@ -4,6 +4,9 @@ from langchain.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains import RetrievalQA
 from langchain.chat_models import ChatOpenAI
+from langchain.embeddings import OpenAIEmbeddings 
+
+
 
 import tempfile
 
@@ -14,11 +17,10 @@ def process_pdf(uploaded_file):
 
     loader = PyPDFLoader(tmp_path)
     pages = loader.load()
-
     splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
     docs = splitter.split_documents(pages)
 
-    embeddings = OpenAIEmbeddings()
+    embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
     vectorstore = FAISS.from_documents(docs, embeddings)
 
     retriever = vectorstore.as_retriever()
